@@ -14,8 +14,9 @@ namespace threadpool // 命名空间为threadpool
     public:
         explicit ThreadPool(size_t num_threads = 4); // 默认创建线程数为4的构造函数
 
-        template <typename F, typename... Arg>                                                     // F为单个固定的模版参数，Arg为不固定数量的模版类型
-        auto enques(F &&f, Arg &&...arg) -> std::future<typename std::result_of<F(Arg...)>::type>; // 线程池的使用（添加函数）
+        template <typename F, typename... Arg> // F为单个固定的模版参数，Arg为不固定数量的模版类型
+        auto enques(F&& f, Arg&&... arg)
+            -> std::future<typename std::result_of<F(Arg...)>::type>; // 线程池的使用（添加函数）
 
         ~ThreadPool(); // 析构函数
 

@@ -6,8 +6,7 @@ namespace threadpool // 命名空间threadpool
     {
         for (size_t i = 0; i < num_threads; i++) // 循环num_threads此，去创建num_threads的线程数
         {
-            workers.emplace_back([this]
-                                 { this->worker(); }); // workers内部通过匿名函数指向私有worker函数构造子线程
+            workers.emplace_back([this] { this->worker(); }); // workers内部通过匿名函数指向私有worker函数构造子线程
         }
     }
 
@@ -19,15 +18,14 @@ namespace threadpool // 命名空间threadpool
             stop = 1;
         }
         cv.notify_all();                         // 唤醒所有的阻塞线程
-        for (std::thread &otherthread : workers) // 循环为未完成的线程
+        for (std::thread& otherthread : workers) // 循环为未完成的线程
         {
             otherthread.join(); // 阻塞主线程使未完成的线程完成
         }
     }
 
     template <typename F, typename... Arg> // F为单个固定的模版参数，Arg为不固定数量的模版类型
-    auto ThreadPool::enques(F &&f, Arg &&...arg)
-        -> std::future<typename std::result_of<F(Arg...)>::type>
+    auto ThreadPool::enques(F&& f, Arg&&... arg) -> std::future<typename std::result_of<F(Arg...)>::type>
     {                                                              // 添加一个不定名作用域，避免因加锁而导致的死锁
         using functype = typename std::resulit_of<F(Arg..)>::type; // 获取得到的函数类型
 
@@ -39,8 +37,7 @@ namespace threadpool // 命名空间threadpool
             std::lock_guard<std::mutx> lock_mtx(this->mtx);          // 为线程中调用函数加一个智能锁
             if (stop)                                                // 判断是否线程池停止
                 throw std::runtime_error("error:threadpool on off"); // 抛出停止异常
-            work_que.emplace([this]()
-                             { (*task)(); }); // 将异步任务的函数名解出并加入线程队列
+            work_que.emplace([this]() { (*task)(); });               // 将异步任务的函数名解出并加入线程队列
         }
         cv.notify_one(); // 唤醒一个线程去执行
 
@@ -54,9 +51,12 @@ namespace threadpool // 命名空间threadpool
             std::function<void()> task; // 定义一临时存储异步任务的变量
             {
                 std::unique_lock<std::mutex> lock(mtx); // 给mtx上锁
-                cv.wait(lock, [this]
-                        { return this->stop || !this->work_que.empty(); }); // 等待条件（是否是stop变量为false，或者任务队列是否为空）
-                if (stop && work_que.empty())                               // stop==1并且任务队列为空，则关闭线程
+                cv.wait(lock,
+                        [this]
+                        {
+                            return this->stop || !this->work_que.empty();
+                        });                   // 等待条件（是否是stop变量为false，或者任务队列是否为空）
+                if (stop && work_que.empty()) // stop==1并且任务队列为空，则关闭线程
                     return;
                 task = std::move(this->work_que.front()); // 给队列上面的赋值给task
                 this->work_que.pop();                     // 出队
