@@ -23,7 +23,7 @@ namespace Net
         {
         public:
             // 构造
-            Session(boost::asio::io_context&, boost::asio::ip::tcp::socket, int serviceID, Server* server);
+            Session(boost::asio::io_context& io, boost::asio::ip::tcp::socket sock, int serviceID_, Server* server_);
 
             // 安全获取自身 shared_ptr（继承自 Connection，需从基类转换）
             std::shared_ptr<Session> shared_from_this()
@@ -42,7 +42,7 @@ namespace Net
             boost::asio::io_context& ioc;
 
             // 业务实现
-            void ToWork(unsigned long long, std::string) override;
+            void ToWork(unsigned long long msg_id, std::string msg) override;
 
         private:
             // 停止
@@ -58,7 +58,7 @@ namespace Net
         {
         public:
             // 构造函数
-            Server(boost::asio::io_context&, boost::asio::ip::tcp::endpoint, int serviceID);
+            Server(boost::asio::io_context& io, boost::asio::ip::tcp::endpoint ep, int serviceID_);
 
             // 开始接受连接（在 io_context 线程中被调用）
             void StartAccept();
@@ -79,7 +79,7 @@ namespace Net
             std::string HandleVueRequest(const std::string& path, const std::string& body);
 
             // 供 Session::ToWork 调用：把消息投递到队列
-            void PushMessage(const std::shared_ptr<Session>&, unsigned long long, std::string);
+            void PushMessage(const std::shared_ptr<Session>& session, unsigned long long msg_id, std::string msg);
 
         protected:
             // 保存io_context
