@@ -1,6 +1,6 @@
 #include "ThreadPool.h" //引入ThreadPool.h 为其编写实现函数
 
-namespace threadpool // 命名空间threadpool
+namespace ThreadPool // 命名空间threadpool
 {
     ThreadPool::ThreadPool(size_t num_threads) : stop(0) // 构造函数的实现并为stop初始化为0（false）
     {
@@ -36,7 +36,7 @@ namespace threadpool // 命名空间threadpool
         {                                                            // 定义锁的作用域避免死锁
             std::lock_guard<std::mutx> lock_mtx(this->mtx);          // 为线程中调用函数加一个智能锁
             if (stop)                                                // 判断是否线程池停止
-                throw std::runtime_error("error:threadpool on off"); // 抛出停止异常
+                throw std::runtime_error("error:ThreadPool on off"); // 抛出停止异常
             work_que.emplace([this]() { (*task)(); });               // 将异步任务的函数名解出并加入线程队列
         }
         cv.notify_one(); // 唤醒一个线程去执行

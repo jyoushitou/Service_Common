@@ -7,7 +7,7 @@
 #include <queue>      //队列库
 #include <future>     //future库
 
-namespace threadpool // 命名空间为threadpool
+namespace ThreadPool // 命名空间为threadpool
 {                    // 线程池的命名空间
     class ThreadPool // 定义线程池
     {                // 定义线程池的连接函数
@@ -29,4 +29,4 @@ namespace threadpool // 命名空间为threadpool
         std::queue<std::function<void()>> work_que; // 任务队列
     };
 
-} // namespace threadpool
+} // namespace ThreadPool
