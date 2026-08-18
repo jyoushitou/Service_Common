@@ -1,12 +1,15 @@
-#include "ThreadPool.h" //引入ThreadPool.h 为其编写实现函数
+#include "ThreadPool.h"
 
-namespace ThreadPool // 命名空间threadpool
+namespace ThreadPool
 {
-    ThreadPool::ThreadPool(size_t num_threads) : stop(0) // 构造函数的实现并为stop初始化为0（false）
+    // 构造函数的实现并为stop初始化为0（false）
+    ThreadPool::ThreadPool(size_t num_threads) : stop(0)
     {
-        for (size_t i = 0; i < num_threads; i++) // 循环num_threads此，去创建num_threads的线程数
+        // 循环num_threads此，去创建num_threads的线程数
+        for (size_t i = 0; i < num_threads; i++)
         {
-            workers.emplace_back([this] { this->worker(); }); // workers内部通过匿名函数指向私有worker函数构造子线程
+            // workers内部通过匿名函数指向私有worker函数构造子线程
+            workers.emplace_back([this] { this->worker(); });
         }
     }
 
@@ -44,24 +47,34 @@ namespace ThreadPool // 命名空间threadpool
         return retfuture; // 返回异步执行的结果
     }
 
-    void ThreadPool::worker() // 每个线程执行函数
+    // 每个线程执行函数
+    void ThreadPool::worker()
     {
-        while (1) // 死循环
+        // 死循环
+        while (1)
         {
-            std::function<void()> task; // 定义一临时存储异步任务的变量
+            // 定义一临时存储异步任务的变量
+            std::function<void()> task;
             {
-                std::unique_lock<std::mutex> lock(mtx); // 给mtx上锁
-                cv.wait(lock,
-                        [this]
-                        {
-                            return this->stop || !this->work_que.empty();
-                        });                   // 等待条件（是否是stop变量为false，或者任务队列是否为空）
-                if (stop && work_que.empty()) // stop==1并且任务队列为空，则关闭线程
+                // 给mtx上锁
+                std::unique_lock<std::mutex> lock(mtx);
+
+                // 等待条件（是否是stop变量为false，或者任务队列是否为空）
+                cv.wait(lock, [this] { return this->stop || !this->work_que.empty(); });
+
+                // stop==1并且任务队列为空，则关闭线程
+                if (stop && work_que.empty())
+                {
                     return;
-                task = std::move(this->work_que.front()); // 给队列上面的赋值给task
-                this->work_que.pop();                     // 出队
+                }
+
+                // 给队列上面的赋值给task（获得函数的签名）
+                task = std::move(this->work_que.front());
+
+                // 出队
+                this->work_que.pop();
             }
             task(); // 执行task
         }
     }
-} // namespace threadpool
+} // namespace ThreadPool

@@ -8,6 +8,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <atomic>
+
 #include "message.h"
 
 #ifdef _WIN32
@@ -20,6 +22,7 @@
 
 namespace Utils
 {
+    // 获取当前时间
     std::string NowTime();
 
     // 初始化
