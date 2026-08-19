@@ -27,27 +27,7 @@ namespace ThreadPool
         }
     }
 
-    template <typename F, typename... Arg> // F为单个固定的模版参数，Arg为不固定数量的模版类型
-    auto ThreadPool::enques(F&& f, Arg&&... arg) -> std::future<typename std::result_of<F(Arg...)>::type>
-    {                                                              // 添加一个不定名作用域，避免因加锁而导致的死锁
-        using functype = typename std::resulit_of<F(Arg..)>::type; // 获取得到的函数类型
-
-        auto task = std::make_shared<std::packaged_task<functype>>(
-            std::bind(std::forward<F>(f), std::forward<Arg>(arg)...)); // 打包一个传入函数为异步任务
-
-        std::future<functype> retfuture = task->get_future();        // 获取上一步打包的异步函数
-        {                                                            // 定义锁的作用域避免死锁
-            std::lock_guard<std::mutx> lock_mtx(this->mtx);          // 为线程中调用函数加一个智能锁
-            if (stop)                                                // 判断是否线程池停止
-                throw std::runtime_error("error:ThreadPool on off"); // 抛出停止异常
-            work_que.emplace([this]() { (*task)(); });               // 将异步任务的函数名解出并加入线程队列
-        }
-        cv.notify_one(); // 唤醒一个线程去执行
-
-        return retfuture; // 返回异步执行的结果
-    }
-
-    // 每个线程执行函数
+        // 每个线程执行函数
     void ThreadPool::worker()
     {
         // 死循环

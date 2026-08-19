@@ -313,7 +313,7 @@ namespace Net
         // 保活
         auto self = shared_from_this();
 
-        Utils::Out_Net_Msg(msg_id, "正在构建发送队列", serviceID);
+        Utils::Out_Net_Msg(msg_id, "正在放入发送队列", serviceID);
 
         // 获得其他线程的发送调用
         boost::asio::post(sock.get_executor(),

@@ -42,7 +42,7 @@ namespace Net
         void Session::Reply(unsigned long long msg_id, std::string msg)
         {
             Utils::Out_Msg("处理完成回复消息中", serviceID);
-            Send(msg_id, std::move(msg));
+            ToSend(msg_id, std::move(msg));
         }
 
         //===Server===
