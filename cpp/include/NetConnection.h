@@ -24,9 +24,9 @@ namespace Net
     {
     public:
         // 构造消息体（只有长度）
-        MsgNode(int max_len, int serviceI);
+        MsgNode(int max_len);
         // 构造消息体（有长度和消息ID）
-        MsgNode(unsigned long long msg_id_, int max_len, int serviceID);
+        MsgNode(unsigned long long msg_id_, int max_len);
         // 析构消息体
         virtual ~MsgNode();
 
@@ -67,9 +67,9 @@ namespace Net
     {
     public:
         // 长度ID构造
-        RecvNode(unsigned long long msg_id, int max_len, int serviceID);
+        RecvNode(unsigned long long msg_id, int max_len);
         // 长度构造
-        RecvNode(int max_len, int serviceID);
+        RecvNode(int max_len);
 
     private:
     };
@@ -77,7 +77,7 @@ namespace Net
     class SendNode : public MsgNode
     {
     public:
-        SendNode(unsigned long long msg_id_, int max_len, int serviceID);
+        SendNode(unsigned long long msg_id_, int max_len);
 
     private:
     };
@@ -88,7 +88,7 @@ namespace Net
     {
     public:
         // 唯一构造函数
-        explicit Connection(boost::asio::ip::tcp::socket socket, int serviceID_);
+        explicit Connection(boost::asio::ip::tcp::socket socket);
 
         // 发送任务创建
         // 隐式msg_id
@@ -121,8 +121,6 @@ namespace Net
         // socket关闭
         void ActuallyClose();
 
-        // 保存服务器ID
-        int serviceID;
         // 存储socket
         boost::asio::ip::tcp::socket sock;
 

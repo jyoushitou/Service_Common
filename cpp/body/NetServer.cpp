@@ -6,9 +6,8 @@ namespace Net
     {
         //===Session===
         // 构造函数
-        Session::Session(boost::asio::io_context& io, boost::asio::ip::tcp::socket sock, int serviceID_,
-                         Server* server_)
-            : Connection(std::move(sock), serviceID_), ioc(io), stop(false), server(server_)
+        Session::Session(boost::asio::io_context& io, boost::asio::ip::tcp::socket sock, Server* server_)
+            : Connection(std::move(sock)), ioc(io), stop(false), server(server_)
         {
         }
 
@@ -29,7 +28,7 @@ namespace Net
         void Session::ToWork(unsigned long long msg_id, std::string msg)
         {
             // 输出收到的消息
-            Utils::Out_Net_Msg(msg_id, "收到客户端消息:" + msg, serviceID);
+            Utils::Out::Out_Net_Msg(msg_id, "收到客户端消息:" + msg);
 
             // 把消息投递到服务器的队列，等待主线程处理
             if (server)
@@ -41,17 +40,14 @@ namespace Net
         // 主线程调用：向该客户端回复一条消息
         void Session::Reply(unsigned long long msg_id, std::string msg)
         {
-            Utils::Out_Msg("处理完成回复消息中", serviceID);
+            Utils::Out::Out_Msg("处理完成回复消息中");
             ToSend(msg_id, std::move(msg));
         }
 
         //===Server===
-        Server::Server(boost::asio::io_context& io, boost::asio::ip::tcp::endpoint ep, int serviceID_)
+        Server::Server(boost::asio::io_context& io, boost::asio::ip::tcp::endpoint ep)
             : ioc(io), acceptor(io), running(true)
         {
-            // 给service赋值
-            serviceID = serviceID_;
-
             // 打开连接
             acceptor.open(ep.protocol());
             // 设置
@@ -83,8 +79,7 @@ namespace Net
                                       if (!ec)
                                       {
                                           // 为每个连接创建一个 Session（传入 this 指针以便消息投递到 Server 队列）
-                                          auto session =
-                                              std::make_shared<Session>(ioc, std::move(*sock), serviceID, this);
+                                          auto session = std::make_shared<Session>(ioc, std::move(*sock), this);
                                           sessions.push_back(session);
                                           // 启动读（继承自 Connection::Start()）
                                           session->Start();
@@ -95,7 +90,7 @@ namespace Net
                                       else
                                       {
                                           // 仅在服务器仍在运行时，才输出真正的 accept 错误
-                                          Utils::Out_Err("accept 错误: " + ec.what(), serviceID);
+                                          Utils::Out::Out_Err("accept 错误: " + ec.what());
                                       }
                                   });
         }

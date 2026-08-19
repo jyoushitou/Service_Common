@@ -23,7 +23,7 @@ namespace Net
         {
         public:
             // 构造
-            Session(boost::asio::io_context& io, boost::asio::ip::tcp::socket sock, int serviceID_, Server* server_);
+            Session(boost::asio::io_context& io, boost::asio::ip::tcp::socket sock, Server* server_);
 
             // 安全获取自身 shared_ptr（继承自 Connection，需从基类转换）
             std::shared_ptr<Session> shared_from_this()
@@ -58,7 +58,7 @@ namespace Net
         {
         public:
             // 构造函数
-            Server(boost::asio::io_context& io, boost::asio::ip::tcp::endpoint ep, int serviceID_);
+            Server(boost::asio::io_context& io, boost::asio::ip::tcp::endpoint ep);
 
             // 开始接受连接（在 io_context 线程中被调用）
             void StartAccept();
@@ -84,9 +84,6 @@ namespace Net
         protected:
             // 保存io_context
             boost::asio::io_context& ioc;
-
-            // 保存当前服务器ID
-            int serviceID;
 
             // 运行线程的保存
             std::atomic<bool> running;
