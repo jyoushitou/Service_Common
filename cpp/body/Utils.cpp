@@ -14,18 +14,38 @@ namespace Utils
 #endif
     }
 
-    // 获取现在时间
-    std::string NowTime()
+    namespace Time
     {
-        // 现在的时间的时间戳
-        auto now = std::time(nullptr);
-        std::tm local{};
-        localtime_s(&local, &now); // Linux/mac 用 localtime_r(&now, &local)
-        std::ostringstream oss;
-        oss << std::put_time(&local, "%Y-%m-%d %H:%M:%S");
-        return oss.str();
-    }
 
+        // 获取现在时间
+        std::string NowTime()
+        {
+            // 现在的时间的时间戳
+            auto now = std::time(nullptr);
+            std::tm local{};
+            localtime_s(&local, &now); // Linux/mac 用 localtime_r(&now, &local)
+            std::ostringstream oss;
+            oss << std::put_time(&local, "%Y-%m-%d %H:%M:%S");
+            return oss.str();
+        }
+
+        std::string NowDay()
+        {
+            // 现在的时间的时间戳
+            auto now = std::time(nullptr);
+            std::tm local{};
+            localtime_s(&local, &now); // Linux/mac 用 localtime_r(&now, &local)
+            // tm_year 从 1900 年开始算
+            int year = local.tm_year + 1900;
+            // tm_mon 范围是 0~11
+            int month = local.tm_mon + 1;
+            // 1~31
+            int day = local.tm_mday;
+
+            return std::to_string(year) + "-" + std::to_string(month) + "-" + std::to_string(day) + "-logs";
+        }
+
+    } // namespace Time
     // 退出
     namespace Exit
     {
@@ -139,18 +159,21 @@ namespace Utils
         // 正常输出
         void Out_Msg(const std::string msg)
         {
-            std::string Out_Msg = "[" + ServiceID[serviceID] + "]" + NowTime() + "  " + msg;
+            std::string Out_Msg = "[" + ServiceID[serviceID] + "]" + Time::NowTime() + "  " + msg;
             std::cout << Out_Msg << std::endl;
-            if (OpenFile::Out_File_add("logs.txt", Out_Msg))
+
+            std::string addr = Time::NowDay() + ".txt";
+            if (OpenFile::Out_File_add(addr, Out_Msg))
                 std::cout << "写入日志失败" << std::endl;
         }
 
         // 错误输出
         void Out_Err(const std::string msg)
         {
-            std::string Out_Str = "[" + ServiceID[serviceID] + "]" + NowTime() + "  [错误] " + msg;
+            std::string Out_Str = "[" + ServiceID[serviceID] + "]" + Time::NowTime() + "  [错误] " + msg;
             std::cerr << Out_Str << std::endl;
-            if (OpenFile::Out_File_add("logs.txt", Out_Str))
+            std::string addr = Time::NowDay() + ".txt";
+            if (OpenFile::Out_File_add(addr, Out_Str))
                 std::cerr << "写入日志失败" << std::endl;
         }
 

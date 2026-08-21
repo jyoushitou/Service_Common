@@ -27,8 +27,15 @@ namespace Utils
     // 存储当前服务器ID
     extern int serviceID;
 
-    // 获取当前时间
-    std::string NowTime();
+    namespace Time
+    {
+        // 获取当前时间
+        std::string NowTime();
+
+        // 获取当期日期
+        std::string NowDay();
+
+    } // namespace Time
 
     // 初始化
     void init();

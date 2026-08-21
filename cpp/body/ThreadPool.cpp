@@ -27,7 +27,7 @@ namespace ThreadPool
         }
     }
 
-        // 每个线程执行函数
+    // 每个线程执行函数
     void ThreadPool::worker()
     {
         // 死循环
@@ -56,5 +56,12 @@ namespace ThreadPool
             }
             task(); // 执行task
         }
+    }
+
+    // 获取消息队列长度
+    size_t ThreadPool::QueueSize()
+    {
+        std::lock_guard<std::mutex> lock(this->mtx);
+        return work_que.size();
     }
 } // namespace ThreadPool
