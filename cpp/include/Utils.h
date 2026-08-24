@@ -79,13 +79,16 @@ namespace Utils
     } // namespace Exit
 
     // 打开文件
-    namespace OpenFile
+    namespace File
     {
         // 追加的
         bool Out_File_add(const std::string addr, const std::string msg);
         // 覆写
-        bool Out_File_wirte(const std::string addr);
-    } // namespace OpenFile
+        bool Out_File_wirte(const std::string addr, const std::string msg);
+
+        // 写入日志
+        void Out_Log(const std::string msg);
+    } // namespace File
 
     namespace Out
     {

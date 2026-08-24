@@ -64,6 +64,7 @@ namespace Utils
         void GracefulShutdown()
         {
             bool expected = false;
+
             if (exit_called.compare_exchange_strong(expected, true))
             {
                 Out::Out_Msg("收到退出信号，正在停止服务器...");
@@ -110,6 +111,7 @@ namespace Utils
             GracefulShutdown();
         }
 
+        // 按键退出的信号
         void Onsignal(int)
         {
             GracefulShutdown();
@@ -136,7 +138,7 @@ namespace Utils
     } // namespace Exit
 
     // 打开文件
-    namespace OpenFile
+    namespace File
     {
         // 追加
         bool Out_File_add(const std::string addr, const std::string msg)
@@ -151,37 +153,40 @@ namespace Utils
             out << msg << std::endl;
             out.close();
             return 0;
-        } // namespace Out_File_add(conststd::string
-    } // namespace OpenFile
+        }
+
+        // 写入日志
+        void Out_Log(const std::string msg)
+        {
+            std::string addr = Time::NowDay() + ".txt";
+            if (File::Out_File_add(addr, msg))
+                std::cout << "写入日志失败" << std::endl;
+        }
+    } // namespace File
 
     namespace Out
     {
         // 正常输出
         void Out_Msg(const std::string msg)
         {
-            std::string Out_Msg = "[" + ServiceID[serviceID] + "]" + Time::NowTime() + "  " + msg;
-            std::cout << Out_Msg << std::endl;
-
-            std::string addr = Time::NowDay() + ".txt";
-            if (OpenFile::Out_File_add(addr, Out_Msg))
-                std::cout << "写入日志失败" << std::endl;
+            std::string Out_Str = "[" + ServiceID[serviceID] + "][INFO]" + Time::NowTime() + " " + msg;
+            std::cout << Out_Str << std::endl;
+            File::Out_Log(Out_Str);
         }
 
         // 错误输出
         void Out_Err(const std::string msg)
         {
-            std::string Out_Str = "[" + ServiceID[serviceID] + "]" + Time::NowTime() + "  [错误] " + msg;
+            std::string Out_Str = "[" + ServiceID[serviceID] + "][ERROR]" + Time::NowTime() + " " + msg;
             std::cerr << Out_Str << std::endl;
-            std::string addr = Time::NowDay() + ".txt";
-            if (OpenFile::Out_File_add(addr, Out_Str))
-                std::cerr << "写入日志失败" << std::endl;
+            File::Out_Log(Out_Str);
         }
 
         // 网络输出
         // 网络部分输出
         void Out_Net_Msg(unsigned long long msg_id, std::string msg)
         {
-            Out_Msg(std::to_string(msg_id) + ":" + msg);
+            Out_Msg("[信息ID:" + std::to_string(msg_id) + "]" + msg);
         }
     } // namespace Out
 } // namespace Utils

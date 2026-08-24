@@ -22,8 +22,8 @@ constexpr int ServiceID_CertService = 7;
 constexpr int ServiceID_TracingService = 8;
 // 服务控制台（服务器ID=9），负责服务管理界面
 constexpr int ServiceID_ServiceConsole = 9;
-// 管理控制台（服务器ID=10），负责后台管理界面
-constexpr int ServiceID_AdminConsole = 10;
+// 搜索服务（服务器ID=16），负责全文检索
+constexpr int ServiceID_Search = 10;
 // 用户服务（服务器ID=11），负责用户信息与认证
 constexpr int ServiceID_User = 11;
 // 文章服务（服务器ID=12），负责文章内容管理
@@ -34,15 +34,12 @@ constexpr int ServiceID_Blog = 13;
 constexpr int ServiceID_Image = 14;
 // 视频服务（服务器ID=15），负责视频上传与处理
 constexpr int ServiceID_Video = 15;
-// 搜索服务（服务器ID=16），负责全文检索
-constexpr int ServiceID_Search = 16;
 
 // 服务器ID映射
 inline std::unordered_map<int, std::string> ServiceID = {
     {1, "RPCGateway"},      {2, "SQL"},         {3, "Registry"},       {4, "ConfigCenter"},   {5, "MonitorService"},
-    {6, "SecurityService"}, {7, "CertService"}, {8, "TracingService"}, {9, "ServiceConsole"}, {10, "AdminConsole"},
-    {11, "User"},           {12, "Article"},    {13, "Blog"},          {14, "Image"},         {15, "Video"},
-    {16, "Search"}};
+    {6, "SecurityService"}, {7, "CertService"}, {8, "TracingService"}, {9, "ServiceConsole"}, {10, "Search"},
+    {11, "User"},           {12, "Article"},    {13, "Blog"},          {14, "Image"},         {15, "Video"}};
 
 namespace Net
 {
