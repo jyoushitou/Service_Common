@@ -86,7 +86,7 @@ pub mod file {
 
     //写入日志
     pub fn out_log(msg: &str) {
-        let addr = time::now_day() + ".txt";
+        let addr = format!("logs/{}-log.txt", time::now_day());
         if !out_file_add(&addr, &msg) {
             eprint!("写入失败");
         }
