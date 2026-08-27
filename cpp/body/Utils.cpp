@@ -158,7 +158,7 @@ namespace Utils
         // 写入日志
         void Out_Log(const std::string msg)
         {
-            std::string addr = Time::NowDay() + ".txt";
+            std::string addr = "logs/" + Time::NowDay() + ".txt";
             if (File::Out_File_add(addr, msg))
                 std::cout << "写入日志失败" << std::endl;
         }
