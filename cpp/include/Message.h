@@ -34,12 +34,15 @@ constexpr int ServiceID_Blog = 13;
 constexpr int ServiceID_Image = 14;
 // 视频服务（服务器ID=15），负责视频上传与处理
 constexpr int ServiceID_Video = 15;
+// AI服务（服务器ID=16)，负责与奈绪AI通讯
+constexpr int ServiceID_NxbotAI = 16;
 
 // 服务器ID映射
 inline std::unordered_map<int, std::string> ServiceID = {
     {1, "RPCGateway"},      {2, "SQL"},         {3, "Registry"},       {4, "ConfigCenter"},   {5, "MonitorService"},
     {6, "SecurityService"}, {7, "CertService"}, {8, "TracingService"}, {9, "ServiceConsole"}, {10, "Search"},
-    {11, "User"},           {12, "Article"},    {13, "Blog"},          {14, "Image"},         {15, "Video"}};
+    {11, "User"},           {12, "Article"},    {13, "Blog"},          {14, "Image"},         {15, "Video"},
+    {16, "NxbotAI"}};
 
 namespace Net
 {

@@ -12,7 +12,7 @@
 #include <mutex>
 #include <vector>
 
-#include "message.h"
+#include "Message.h"
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
