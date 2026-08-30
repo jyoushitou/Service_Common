@@ -16,6 +16,7 @@
 #include "Message.h"
 
 #include <thread>
+#include <sys/stat.h>
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -23,8 +24,10 @@
 #endif
 #include <winsock2.h>
 #include <windows.h>
+#include <direct.h>
 #else
 #include <csignal>
+#include <sys/types.h>
 #endif
 
 namespace Utils
@@ -93,6 +96,15 @@ namespace Utils
     // 打开文件
     namespace File
     {
+        // 日志的写入路径
+        std::string logsdir = "logs";
+
+        // 设置自定义的日志文件目录
+        void SetLogsDir(const std::string dir);
+
+        // 检查是否有logs文件夹，没有则创建
+        bool CheckLogsDir();
+
         // 追加的
         bool Out_File_add(const std::string addr, const std::string msg);
         // 覆写

@@ -174,6 +174,27 @@ namespace Utils
     // 打开文件
     namespace File
     {
+
+        // 设置自定义的日志文件目录
+        void SetLogsDir(const std::string dir)
+        {
+            logsdir = dir;
+        }
+
+        // 检查是否有logs文件夹，没有则创建
+        bool CheckLogsDir()
+        {
+#ifdef _WIN32
+            if (_mkdir(logsdir.c_str()) == 0)
+                return true;
+            return errno == EEXIST;
+#else
+            if (mkdir(dir.c_str(), 0755) == 0)
+                return true;
+            return errno == EEXIST;
+#endif
+        }
+
         // 追加
         bool Out_File_add(const std::string addr, const std::string msg)
         {
@@ -192,7 +213,12 @@ namespace Utils
         // 写入日志
         void Out_Log(const std::string msg)
         {
-            std::string addr = "logs/" + Time::NowDay() + ".txt";
+            // 确认是否有这个文件夹
+            if (CheckLogsDir)
+            {
+                std::cerr << "创建logs失败" << std::endl;
+            }
+            std::string addr = logsdir + "/" + Time::NowDay() + ".txt";
             if (File::Out_File_add(addr, msg))
                 std::cout << "写入日志失败" << std::endl;
         }
