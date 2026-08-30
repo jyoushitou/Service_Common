@@ -111,10 +111,19 @@ namespace Utils
                 }
             }
 
+#ifdef _WIN32
             if (exit_event)
             {
                 SetEvent(exit_event);
             }
+#else
+            {
+                // Linux/macOS：通知 WaitExit() 返回
+                std::lock_guard<std::mutex> lock(exit_mutex);
+                exit_signaled = true;
+            }
+            exit_cv.notify_all();
+#endif
         }
 
         // 等待退出
