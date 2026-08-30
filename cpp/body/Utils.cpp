@@ -10,20 +10,42 @@ namespace Utils
         if (!Exit::exit_event)
             // 手动重置
             Exit::exit_event = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+        // 设置控制台的编码格式
         SetConsoleOutputCP(CP_UTF8);
+        SetConsoleCtrlHandler(Exit::ConsoleCtrlHandler, TRUE);
+#else
+        // Linux/macOS：注册信号处理器，Ctrl+C 或 kill 时触发优雅退出
+        std::signal(SIGINT, Exit::Onsignal);
+        std::signal(SIGTERM, Exit::Onsignal);
+        // 可选：忽略 SIGPIPE 防止写入已关闭 socket 导致进程崩溃
+        std::signal(SIGPIPE, SIG_IGN);
 #endif
     }
 
     namespace Time
     {
 
+        // 获取local
+        void Get_Local(std::tm& local, time_t now)
+        {
+#if _WIN32
+            localtime_s(&local, &now);
+#else
+            // 按照Linux编码的获取
+            localtime_r(&now, &local);
+#endif
+        }
+
         // 获取现在时间
         std::string NowTime()
         {
             // 现在的时间的时间戳
-            auto now = std::time(nullptr);
+            time_t now = std::time(nullptr);
             std::tm local{};
-            localtime_s(&local, &now); // Linux/mac 用 localtime_r(&now, &local)
+
+            // 获取时间
+            Get_Local(local, now);
+
             std::ostringstream oss;
             oss << std::put_time(&local, "%Y-%m-%d %H:%M:%S");
             return oss.str();
@@ -34,7 +56,10 @@ namespace Utils
             // 现在的时间的时间戳
             auto now = std::time(nullptr);
             std::tm local{};
-            localtime_s(&local, &now); // Linux/mac 用 localtime_r(&now, &local)
+
+            // 获取时间
+            Get_Local(local, now);
+
             // tm_year 从 1900 年开始算
             int year = local.tm_year + 1900;
             // tm_mon 范围是 0~11

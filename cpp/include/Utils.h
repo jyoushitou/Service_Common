@@ -14,12 +14,16 @@
 
 #include "Message.h"
 
+#include <thread>
+
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <winsock2.h>
 #include <windows.h>
+#else
+#include <csignal>
 #endif
 
 namespace Utils
@@ -29,6 +33,8 @@ namespace Utils
 
     namespace Time
     {
+        // 根据操作系统获取local
+        void Get_Local(std::tm& local, time_t now);
         // 获取当前时间
         std::string NowTime();
 
@@ -37,7 +43,7 @@ namespace Utils
 
     } // namespace Time
 
-    // 初始化
+    // 初始化控制台，注册回调
     void init();
 
     // 退出
@@ -57,6 +63,11 @@ namespace Utils
 
         // Windows 控制台关闭事件处理
         BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlType);
+#else
+        // 条件变量的实现通知
+        inline std::mutex exit_mutex;
+        inline std::condition_variable exit_cv;
+        inline bool exit_signaled = false;
 #endif
 
         // 回调停止服务
