@@ -174,7 +174,6 @@ namespace Utils
     // 打开文件
     namespace File
     {
-
         // 设置自定义的日志文件目录
         void SetLogsDir(const std::string dir)
         {
@@ -189,7 +188,7 @@ namespace Utils
                 return true;
             return errno == EEXIST;
 #else
-            if (mkdir(dir.c_str(), 0755) == 0)
+            if (mkdir(logsdir.c_str(), 0755) == 0)
                 return true;
             return errno == EEXIST;
 #endif
@@ -214,7 +213,7 @@ namespace Utils
         void Out_Log(const std::string msg)
         {
             // 确认是否有这个文件夹
-            if (CheckLogsDir)
+            if (CheckLogsDir())
             {
                 std::cerr << "创建logs失败" << std::endl;
             }

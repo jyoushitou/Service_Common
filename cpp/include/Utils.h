@@ -97,7 +97,7 @@ namespace Utils
     namespace File
     {
         // 日志的写入路径
-        std::string logsdir = "logs";
+        inline std::string logsdir = "logs";
 
         // 设置自定义的日志文件目录
         void SetLogsDir(const std::string dir);
